@@ -3,9 +3,7 @@ package com.example.a2dgame;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-public class ChibiCharacter extends GameObject{
-
-    // each row in the main image refers to a movement type
+public class ChibiCharacter extends GameObject {
 
     private static final int ROW_TOP_TO_BOTTOM = 0;
     private static final int ROW_RIGHT_TO_LEFT = 1;
@@ -37,7 +35,6 @@ public class ChibiCharacter extends GameObject{
 
         this.gameSurface= gameSurface;
 
-        //creating arrays for each direction with associated bitmaps
         this.topToBottoms = new Bitmap[colCount]; // 3
         this.rightToLefts = new Bitmap[colCount]; // 3
         this.leftToRights = new Bitmap[colCount]; // 3
@@ -51,7 +48,6 @@ public class ChibiCharacter extends GameObject{
         }
     }
 
-     //returns array of bitmaps that character is currently moving
     public Bitmap[] getMoveBitmaps()  {
         switch (rowUsing)  {
             case ROW_BOTTOM_TO_TOP:
@@ -72,21 +68,24 @@ public class ChibiCharacter extends GameObject{
         return bitmaps[this.colUsing];
     }
 
-    public void update (){
-        colUsing++;
-        if(colUsing>=colCount) colUsing = 0;
 
-        //current time in nanoseconds
+    public void update()  {
+        this.colUsing++;
+        if(colUsing >= this.colCount)  {
+            this.colUsing =0;
+        }
+        // Current time in nanoseconds
         long now = System.nanoTime();
 
-        // If never once drew an image set last drawn to now
-        if (lastDrawNanoTime == -1) lastDrawNanoTime= now;
+        // Never once did draw.
+        if(lastDrawNanoTime==-1) {
+            lastDrawNanoTime= now;
+        }
+        // Change nanoseconds to milliseconds (1 nanosecond = 1000000 milliseconds).
+        int deltaTime = (int) ((now - lastDrawNanoTime)/ 1000000 );
 
-        // change in time from previous drawn in milliseconds
-        int changeInTime = (int) ((now - lastDrawNanoTime)/ 1000000 );
-
-        // Distance moved
-        float distance = VELOCITY * changeInTime;
+        // Distance moves
+        float distance = VELOCITY * deltaTime;
 
         double movingVectorLength = Math.sqrt(movingVectorX* movingVectorX + movingVectorY*movingVectorY);
 
@@ -94,23 +93,43 @@ public class ChibiCharacter extends GameObject{
         this.x = x +  (int)(distance* movingVectorX / movingVectorLength);
         this.y = y +  (int)(distance* movingVectorY / movingVectorLength);
 
-
         // When the game's character touches the edge of the screen, then change direction
+
         if(this.x < 0 )  {
             this.x = 0;
             this.movingVectorX = - this.movingVectorX;
-        } else if(this.x > this.gameSurface.getWidth() -spriteWidth)  {
-            this.x= this.gameSurface.getWidth()-spriteWidth;
+        } else if(this.x > this.gameSurface.getWidth() -width)  {
+            this.x= this.gameSurface.getWidth()-width;
             this.movingVectorX = - this.movingVectorX;
         }
 
-        if(this.y < 0 ){
+        if(this.y < 0 )  {
             this.y = 0;
             this.movingVectorY = - this.movingVectorY;
-        } else if(this.y > this.gameSurface.getHeight()- spriteHeight);
-            this.y= this.gameSurface.getHeight()- spriteHeight;
+        } else if(this.y > this.gameSurface.getHeight()- height)  {
+            this.y= this.gameSurface.getHeight()- height;
             this.movingVectorY = - this.movingVectorY ;
         }
+
+        // rowUsing
+        if( movingVectorX > 0 )  {
+            if(movingVectorY > 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
+                this.rowUsing = ROW_TOP_TO_BOTTOM;
+            }else if(movingVectorY < 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
+                this.rowUsing = ROW_BOTTOM_TO_TOP;
+            }else  {
+                this.rowUsing = ROW_LEFT_TO_RIGHT;
+            }
+        } else {
+            if(movingVectorY > 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
+                this.rowUsing = ROW_TOP_TO_BOTTOM;
+            }else if(movingVectorY < 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
+                this.rowUsing = ROW_BOTTOM_TO_TOP;
+            }else  {
+                this.rowUsing = ROW_RIGHT_TO_LEFT;
+            }
+        }
+    }
 
     public void draw(Canvas canvas)  {
         Bitmap bitmap = this.getCurrentMoveBitmap();
@@ -123,6 +142,4 @@ public class ChibiCharacter extends GameObject{
         this.movingVectorX= movingVectorX;
         this.movingVectorY = movingVectorY;
     }
-
-
 }

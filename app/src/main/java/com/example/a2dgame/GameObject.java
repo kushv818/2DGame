@@ -3,13 +3,19 @@ package com.example.a2dgame;
 import android.graphics.Bitmap;
 
 public abstract class GameObject {
+
     protected Bitmap image;
+
     protected final int rowCount;
     protected final int colCount;
-    protected final int imageWidth;
-    protected final int imageHeight;
-    protected final int spriteWidth;
-    protected final int spriteHeight;
+
+    protected final int WIDTH;
+    protected final int HEIGHT;
+
+    protected final int width;
+
+
+    protected final int height;
     protected int x;
     protected int y;
 
@@ -22,16 +28,16 @@ public abstract class GameObject {
         this.x= x;
         this.y= y;
 
-        this.imageWidth = image.getWidth();
-        this.imageHeight = image.getHeight();
+        this.WIDTH = image.getWidth();
+        this.HEIGHT = image.getHeight();
 
-        this.spriteWidth = this.imageWidth/ colCount;
-        this.spriteHeight= this.imageHeight/ rowCount;
+        this.width = this.WIDTH/ colCount;
+        this.height= this.HEIGHT/ rowCount;
     }
 
     protected Bitmap createSubImageAt(int row, int col)  {
         // createBitmap(bitmap, x, y, width, height).
-        Bitmap subImage = Bitmap.createBitmap(image, col* spriteWidth, row* spriteHeight ,spriteWidth,spriteHeight);
+        Bitmap subImage = Bitmap.createBitmap(image, col* width, row* height ,width,height);
         return subImage;
     }
 
@@ -45,10 +51,11 @@ public abstract class GameObject {
 
 
     public int getHeight() {
-        return spriteHeight;
+        return height;
     }
 
     public int getWidth() {
-        return spriteWidth;
+        return width;
     }
+
 }

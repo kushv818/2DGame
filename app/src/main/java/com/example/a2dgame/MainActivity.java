@@ -20,4 +20,5 @@ public class MainActivity extends Activity {
 
         this.setContentView(new GameSurface(this));
     }
+
 }
